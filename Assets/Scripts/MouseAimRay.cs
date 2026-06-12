@@ -1,7 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Netcode;
 
-public class MouseAimRay : MonoBehaviour
+public class MouseAimRay : NetworkBehaviour
 {
     [Header("Ray Origin (point above player)")]
     [SerializeField] private Transform rayOrigin;
@@ -35,6 +36,8 @@ public class MouseAimRay : MonoBehaviour
 
     private void Update()
     {
+        if (!IsOwner) return;
+
         if (rayOrigin == null || lr == null)
             return;
 
@@ -44,7 +47,7 @@ public class MouseAimRay : MonoBehaviour
 
         UpdateAimIndicator(hitWorld, hit);
 
-        // ⭐ Smoothly animate indicator scale
+        // Smoothly animate indicator scale
         currentIndicatorScale = Mathf.Lerp(
             currentIndicatorScale,
             targetIndicatorScale,
@@ -102,7 +105,7 @@ public class MouseAimRay : MonoBehaviour
         return (target - rayOrigin.position).normalized;
     }
 
-    // ⭐ Called by ChargeAndLaunch
+    // Called by ChargeAndLaunch
     public void SetIndicatorScale(float sphereScale)
     {
         float radius = sphereScale * 0.5f;

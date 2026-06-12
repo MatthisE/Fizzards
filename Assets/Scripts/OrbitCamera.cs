@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Netcode;
 
-public class OrbitCamera : MonoBehaviour
+
+public class OrbitCamera : NetworkBehaviour
 {
     public Transform target;
     public float distance = 10f;
@@ -14,6 +16,17 @@ public class OrbitCamera : MonoBehaviour
 
     void Start()
     {
+        if (!IsOwner)
+        {
+            // Disable camera and audio listener for remote players
+            GetComponent<Camera>().enabled = false;
+
+            AudioListener listener = GetComponent<AudioListener>();
+            if (listener) listener.enabled = false;
+
+            return;
+        }
+
         Vector3 angles = transform.eulerAngles;
         yaw = angles.y;
         pitch = angles.x;
@@ -21,6 +34,8 @@ public class OrbitCamera : MonoBehaviour
 
     void LateUpdate()
     {
+        if (!IsOwner) return;
+        
         if (!target) return;
 
         Vector2 mouse = Mouse.current.position.ReadValue();

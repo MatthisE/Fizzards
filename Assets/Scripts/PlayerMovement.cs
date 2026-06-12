@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Netcode;
 
 [RequireComponent(typeof(Rigidbody))]
-public class PlayerMovement : MonoBehaviour
+public class PlayerMovement : NetworkBehaviour
 {
     private Rigidbody rb;
     private Vector2 moveInput;
@@ -11,7 +12,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float moveSpeed = 8f;
 
     [Header("Jump")]
-    [SerializeField] private float jumpForce = 5f;
+    [SerializeField] private float jumpForce = 3f;
     [SerializeField] private float jumpHoldForce = 10f;
     [SerializeField] private float jumpHoldTime = 500f;
 
@@ -24,20 +25,53 @@ public class PlayerMovement : MonoBehaviour
     private bool jumpHeld;
     private float jumpTimer;
 
+    public override void OnNetworkSpawn()
+    {
+        rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true;
+
+        var input = GetComponent<PlayerInput>();
+
+        if (IsOwner)
+        {
+            input.enabled = true;
+            input.ActivateInput();
+        }
+        else
+        {
+            input.enabled = false;
+            input.DeactivateInput();
+        }
+    }
+
+    /*
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
     }
+    */
 
-    public void OnMove(InputValue value)
+    public void OnMove(InputAction.CallbackContext context)
     {
-        moveInput = value.Get<Vector2>();
+
+        Debug.Log($"OnMove fired on object '{gameObject.name}' | " +
+              $"LocalClientId={NetworkManager.Singleton.LocalClientId} | " +
+              $"OwnerClientId={OwnerClientId} | " +
+              $"IsOwner={IsOwner} | " +
+              $"IsLocalPlayer={IsLocalPlayer}");
+
+
+        if (!IsOwner) return;
+
+        moveInput = context.ReadValue<Vector2>();
     }
 
-    public void OnJump(InputValue value)
+    public void OnJump(InputAction.CallbackContext context)
     {
-        bool pressed = value.Get<float>() > 0.5f;
+        if (!IsOwner) return;
+
+        bool pressed = context.ReadValue<float>() > 0.5f;
 
         if (pressed)
         {
@@ -60,6 +94,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!IsOwner) return;
+
         Move();
         HandleJumpHold();
         ApplyScaledGravity();
@@ -113,6 +149,8 @@ public class PlayerMovement : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (!IsOwner) return;
+
         // Rotate player to face camera direction
         Vector3 camForward = cameraTransform.forward;
         camForward.y = 0f;
