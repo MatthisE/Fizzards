@@ -15,9 +15,9 @@ GameObject:
   - component: {fileID: 3973337031251045064}
   - component: {fileID: 8023916263869203410}
   - component: {fileID: 4706994112108605756}
-  - component: {fileID: 8510842217794380069}
   - component: {fileID: 5647104133647846636}
   - component: {fileID: 2673260564981111006}
+  - component: {fileID: 8510842217794380069}
   - component: {fileID: 3557611833717023717}
   m_Layer: 0
   m_Name: Player
@@ -238,7 +238,19 @@ MonoBehaviour:
     m_ActionId: 641cd816-40e6-41b4-8c3d-04687c349290
     m_ActionName: 'Player/Sprint[/Keyboard/leftShift]'
   - m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 2673260564981111006}
+        m_TargetAssemblyTypeName: ChargeAndLaunch, Assembly-CSharp
+        m_MethodName: OnFire
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
     m_ActionId: ee6b355c-5092-42c1-8522-9ad6e7503e6b
     m_ActionName: 'Player/Fire[/Mouse/leftButton]'
   - m_PersistentCalls:
@@ -298,7 +310,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 4112441111
+  GlobalObjectIdHash: 1322891442
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -311,25 +323,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &8510842217794380069
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2227806587675840193}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1009841e5eb53e9418a8de37c9172e1c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  ShowTopMostFoldoutHeaderGroup: 1
-  moveSpeed: 8
-  jumpForce: 3
-  jumpHoldForce: 10
-  jumpHoldTime: 500
-  jumpSpeedMultiplier: 3
-  cameraTransform: {fileID: 2789947523145420859}
 --- !u!114 &5647104133647846636
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -362,13 +355,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a29f211dface24f4faa3922be07a107a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChargeAndLaunch
+  ShowTopMostFoldoutHeaderGroup: 1
   aimRay: {fileID: 5647104133647846636}
   rayOrigin: {fileID: 7746979753360106655}
   spherePrefab: {fileID: 5063052070394380465, guid: e0684b45a0c8bc046a10822ffd530bfc, type: 3}
-  growSpeed: 2
   launchForce: 20
-  maxSize: 5
   launchCooldown: 0.2
+--- !u!114 &8510842217794380069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2227806587675840193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1009841e5eb53e9418a8de37c9172e1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
+  ShowTopMostFoldoutHeaderGroup: 1
+  moveSpeed: 8
+  jumpForce: 3
+  jumpHoldForce: 10
+  jumpHoldTime: 500
+  jumpSpeedMultiplier: 3
+  cameraTransform: {fileID: 2789947523145420859}
 --- !u!114 &3557611833717023717
 MonoBehaviour:
   m_ObjectHideFlags: 0

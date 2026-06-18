@@ -21,6 +21,15 @@ public class MouseAimRay : NetworkBehaviour
 
     private LineRenderer lr;
 
+    public override void OnNetworkSpawn()
+    {
+        if (!IsOwner)
+        {
+            enabled = false;
+            return;
+        }
+    }
+
     private void Awake()
     {
         lr = rayOrigin.GetComponent<LineRenderer>();

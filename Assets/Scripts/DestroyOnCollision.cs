@@ -1,14 +1,17 @@
+using Unity.Netcode;
 using UnityEngine;
 
-public class DestroyOnCollision : MonoBehaviour
+public class DestroyOnCollision : NetworkBehaviour
 {
     private void OnCollisionEnter(Collision collision)
     {
-        Destroy(gameObject);
+        if (!IsServer) return; // only server can destroy network objects
+        NetworkObject.Despawn();
     }
 
     private void OnTriggerEnter(Collider other)
     {
-        Destroy(gameObject);
+        if (!IsServer) return; // only server can destroy network objects
+        NetworkObject.Despawn();
     }
 }

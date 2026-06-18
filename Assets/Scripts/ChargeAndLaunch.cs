@@ -1,100 +1,72 @@
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class ChargeAndLaunch : MonoBehaviour
+public class ChargeAndLaunch : NetworkBehaviour
 {
     [Header("References")]
     [SerializeField] private MouseAimRay aimRay;
     [SerializeField] private Transform rayOrigin;
     [SerializeField] private GameObject spherePrefab;
 
-    [Header("Charge Settings")]
-    [SerializeField] private float growSpeed = 2f;
+    [Header("Fire Settings")]
     [SerializeField] private float launchForce = 20f;
-    [SerializeField] private float maxSize = 5f;
 
     [Header("Cooldown")]
     [SerializeField] private float launchCooldown = 0.2f;
-    private float cooldownTimer = 0f;
+    private float cooldownTimer = 0.2f;
 
-    private GameObject currentSphere;
-    private bool charging = false;
+    private PlayerInput playerInput;
 
-    private void Update()
+    private void Awake()
     {
-        // Cooldown countdown
-        if (cooldownTimer > 0f)
-            cooldownTimer -= Time.deltaTime;
+        playerInput = GetComponent<PlayerInput>();
+        playerInput.enabled = false;   // disable until ownership is assigned
+    }
 
-        if (charging && currentSphere != null)
+    public override void OnNetworkSpawn()
+    {
+        if (IsOwner)
         {
-            float radius = currentSphere.transform.localScale.y * 0.5f;
-            currentSphere.transform.position = rayOrigin.position + Vector3.up * radius;
-
-            Vector3 scale = currentSphere.transform.localScale;
-
-            if (scale.x < maxSize)
-            {
-                float growAmount = growSpeed * Time.deltaTime;
-                scale += Vector3.one * growAmount;
-                scale = Vector3.one * Mathf.Min(scale.x, maxSize);
-                currentSphere.transform.localScale = scale;
-            }
-
-            aimRay.SetIndicatorScale(scale.x);
+            // enable input ONLY when ownership is confirmed
+            playerInput.enabled = true;
         }
     }
 
-    public void OnFire(InputValue value)
+    private void Update()
     {
-        bool pressed = value.Get<float>() > 0.5f;
+        if (!IsOwner) return;
 
-        if (pressed)
-            StartCharging();
-        else
-            ReleaseSphere();
-    }
-
-    private void StartCharging()
-    {
-        // Block charging if still cooling down
         if (cooldownTimer > 0f)
-            return;
-
-        if (currentSphere != null)
-            return;
-
-        charging = true;
-
-        currentSphere = Instantiate(spherePrefab, rayOrigin.position, Quaternion.identity);
-        currentSphere.transform.localScale = Vector3.one * 0.5f;
-
-        float radius = currentSphere.transform.localScale.y * 0.5f;
-        currentSphere.transform.position = rayOrigin.position + Vector3.up * radius;
+            cooldownTimer -= Time.deltaTime;
     }
 
-    private void ReleaseSphere()
+    public void OnFire(InputAction.CallbackContext context)
     {
-        if (currentSphere == null)
-            return;
+        if (!IsOwner) return;
 
-        charging = false;
+        // Only fire on actual button press
+        if (!context.started) return;
 
-        Vector3 dir = aimRay.GetAimDirection();
+        // Cooldown
+        if (cooldownTimer > 0f) return;
 
-        Rigidbody rb = currentSphere.GetComponent<Rigidbody>();
-        if (rb == null)
-            rb = currentSphere.AddComponent<Rigidbody>();
+        Vector3 dir = aimRay.GetAimDirection().normalized;
+        SpawnFireballServerRpc(rayOrigin.position, dir);
 
+        cooldownTimer = launchCooldown;
+    }
+
+    [ServerRpc]
+    private void SpawnFireballServerRpc(Vector3 pos, Vector3 dir)
+    {
+        GameObject fb = Instantiate(spherePrefab, pos, Quaternion.identity);
+
+        NetworkObject netObj = fb.GetComponent<NetworkObject>();
+        netObj.Spawn(); // everyone sees it
+
+        Rigidbody rb = fb.GetComponent<Rigidbody>();
         rb.useGravity = false;
         rb.linearVelocity = dir * launchForce;
-
-        currentSphere = null;
-
-        // Reset indicator size
-        aimRay.SetIndicatorScale(1f);
-
-        // Start cooldown
-        cooldownTimer = launchCooldown;
     }
 }

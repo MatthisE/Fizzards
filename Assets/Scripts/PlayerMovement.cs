@@ -54,14 +54,6 @@ public class PlayerMovement : NetworkBehaviour
 
     public void OnMove(InputAction.CallbackContext context)
     {
-
-        Debug.Log($"OnMove fired on object '{gameObject.name}' | " +
-              $"LocalClientId={NetworkManager.Singleton.LocalClientId} | " +
-              $"OwnerClientId={OwnerClientId} | " +
-              $"IsOwner={IsOwner} | " +
-              $"IsLocalPlayer={IsLocalPlayer}");
-
-
         if (!IsOwner) return;
 
         moveInput = context.ReadValue<Vector2>();
