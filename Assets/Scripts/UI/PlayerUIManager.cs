@@ -20,6 +20,13 @@ public class PlayerUIManager : NetworkBehaviour
     {
         if (!IsClient) return;
 
+        // ⭐ Add UI for players that already exist (important for lobby → game)
+        foreach (var kvp in NetworkManager.Singleton.ConnectedClients)
+        {
+            TryAddPlayer(kvp.Value.PlayerObject);
+        }
+
+        // Listen for new players joining (rare in game scene, but correct)
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
     }
@@ -55,5 +62,4 @@ public class PlayerUIManager : NetworkBehaviour
 
         entries[playerObj.OwnerClientId] = entry;
     }
-
 }

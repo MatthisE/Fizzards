@@ -959,7 +959,7 @@ MonoBehaviour:
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: 127.0.0.1
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1087376247
@@ -1278,7 +1278,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1484885615}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c70e9a7ed74b96c4f948fb678f239782, type: 3}
   m_Name: 
@@ -1431,6 +1431,7 @@ GameObject:
   - component: {fileID: 1731745385}
   - component: {fileID: 1731745384}
   - component: {fileID: 1731745383}
+  - component: {fileID: 1731745386}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -1485,7 +1486,7 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 1731745383}
-    PlayerPrefab: {fileID: 2227806587675840193, guid: 220aae0ec9ba64340892402495791f25, type: 3}
+    PlayerPrefab: {fileID: 0}
     Prefabs:
       NetworkPrefabsLists:
       - {fileID: 11400000, guid: 45317b87185075f449a71a99e1f9de21, type: 2}
@@ -1526,6 +1527,18 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1731745386
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1731745382}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6847b5ce358586f418852c245678041e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DontDestroy
 --- !u!1 &1862996542
 GameObject:
   m_ObjectHideFlags: 0

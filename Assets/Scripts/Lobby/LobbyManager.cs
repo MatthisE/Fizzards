@@ -24,7 +24,6 @@ public class LobbyManager : MonoBehaviour
         if (!NetworkManager.Singleton.IsHost)
             return;
 
-        // Load the gameplay scene for everyone
         NetworkManager.Singleton.SceneManager.LoadScene(
             "Main",
             LoadSceneMode.Single
