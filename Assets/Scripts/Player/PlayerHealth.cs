@@ -40,7 +40,7 @@ public class PlayerHealth : NetworkBehaviour
 
     private void OnHealthChanged(int oldValue, int newValue)
     {
-        Debug.Log($"Player {OwnerClientId} health: {newValue}");
+        //Debug.Log($"Player {OwnerClientId} health: {newValue}");
     }
 
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
