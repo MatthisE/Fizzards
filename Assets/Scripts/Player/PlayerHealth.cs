@@ -12,6 +12,10 @@ public class PlayerHealth : NetworkBehaviour
         NetworkVariableWritePermission.Server
     );
 
+    [Header("Death Settings")]
+    [SerializeField] private GameObject aimIndicator;
+    [SerializeField] private Material transparentMaterial;
+
     [Header("Hit Flash (multiple meshes)")]
     [SerializeField] private Renderer[] renderers;   // assign all body parts here
     [SerializeField] private Color hitColor = Color.red;
@@ -54,14 +58,77 @@ public class PlayerHealth : NetworkBehaviour
         {
             Debug.Log($"Player {OwnerClientId} died.");
 
-            // Despawn the player on the server
-            NetworkObject.Despawn();
+            ApplyTransparentMaterialClientRpc();
+            DisableAimIndicatorClientRpc();
+            SetDeadLayerClientRpc();
+            DisableLocalScriptsClientRpc();
+            HideForOthersClientRpc();
         }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void ApplyTransparentMaterialClientRpc()
+    {
+        // Only the dead player should see himself transparent
+        if (!IsOwner)
+            return;
+
+        foreach (var r in renderers)
+            r.material = transparentMaterial;
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void DisableAimIndicatorClientRpc()
+    {
+        if (aimIndicator != null)
+            aimIndicator.SetActive(false);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void SetDeadLayerClientRpc()
+    {
+        int deadLayer = LayerMask.NameToLayer("DeadPlayer");
+        SetLayerRecursively(gameObject, deadLayer);
+    }
+
+    private void SetLayerRecursively(GameObject obj, int layer)
+    {
+        obj.layer = layer;
+
+        foreach (Transform child in obj.transform)
+            SetLayerRecursively(child.gameObject, layer);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void DisableLocalScriptsClientRpc()
+    {
+        // Only disable scripts on the player who died
+        if (!IsOwner)
+            return;
+
+        // Disable your gameplay scripts
+        GetComponent<MouseAimRay>().enabled = false;
+        GetComponent<ChargeAndLaunch>().enabled = false;
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void HideForOthersClientRpc()
+    {
+        // If this is *my* player, do NOT hide it
+        if (IsOwner)
+            return;
+
+        foreach (var r in renderers)
+            r.enabled = false;
     }
 
     [Rpc(SendTo.Everyone)]
     private void HitFlashClientRpc()
     {
+        // Do NOT flash if dead
+        if (CurrentHealth.Value <= 0)
+            return;
+
         if (!isFlashing)
             StartCoroutine(FlashRoutine());
     }

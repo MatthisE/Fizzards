@@ -20,7 +20,7 @@ GameObject:
   - component: {fileID: 8510842217794380069}
   - component: {fileID: 663840706807393795}
   - component: {fileID: 8527287467356297562}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -311,7 +311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1322891442
+  GlobalObjectIdHash: 4112441111
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -400,6 +400,8 @@ MonoBehaviour:
       MinSecondsBetweenUpdates: 0
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: 100
+  aimIndicator: {fileID: 7310424043214278402}
+  transparentMaterial: {fileID: 2100000, guid: 34be970a0fc0f0e4a80e96e137d6e48f, type: 2}
   renderers:
   - {fileID: 8145462653850566822}
   - {fileID: 4207504740572122093}
@@ -461,7 +463,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7746979753360106655}
   - component: {fileID: 5791762765557576564}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: RayOrigin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -605,7 +607,7 @@ GameObject:
   - component: {fileID: 6874652080033568892}
   - component: {fileID: 4207504740572122093}
   - component: {fileID: 1065777856566296589}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Arms
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -715,7 +717,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1025889700138601631}
   - component: {fileID: 5208740282290869412}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: AimIndicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -809,7 +811,7 @@ GameObject:
   - component: {fileID: 1656678568920203021}
   - component: {fileID: 7263855467554573971}
   - component: {fileID: 1187667334674002416}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}

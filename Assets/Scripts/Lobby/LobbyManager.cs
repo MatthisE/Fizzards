@@ -19,6 +19,7 @@ public class LobbyManager : MonoBehaviour
 
         // Listen for failed connections
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
+        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
     }
 
     private string GetLocalIPAddress()
@@ -55,13 +56,25 @@ public class LobbyManager : MonoBehaviour
         Debug.Log($"Client connecting to {ip}");
     }
 
+    private void OnClientConnected(ulong clientId)
+    {
+        // Only the host should log this
+        if (NetworkManager.Singleton.IsHost)
+        {
+            Debug.Log($"Client connected: {clientId}");
+        }
+    }
+
+
     private void OnClientDisconnected(ulong clientId)
     {
         // Only show error for the local client
         if (clientId == NetworkManager.Singleton.LocalClientId)
         {
-            errorText.text = "Could not connect to a host";
-            errorText.gameObject.SetActive(true);
+            //errorText.text = "Could not connect to a host";
+            //errorText.gameObject.SetActive(true);
+
+            Debug.Log($"Could not connect to a host");
         }
     }
 
