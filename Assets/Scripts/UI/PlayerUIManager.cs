@@ -1,5 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 
 public class PlayerUIManager : NetworkBehaviour
@@ -14,52 +15,120 @@ public class PlayerUIManager : NetworkBehaviour
     private void Awake()
     {
         Instance = this;
+        Debug.Log("[PlayerUIManager] Awake()");
     }
 
     public override void OnNetworkSpawn()
     {
-        if (!IsClient) return;
+        Debug.Log("[PlayerUIManager] OnNetworkSpawn()");
 
-        // ⭐ Add UI for players that already exist (important for lobby → game)
-        foreach (var kvp in NetworkManager.Singleton.ConnectedClients)
+        if (!IsClient)
         {
-            TryAddPlayer(kvp.Value.PlayerObject);
+            Debug.Log("[PlayerUIManager] Not a client → abort");
+            return;
         }
 
-        // Listen for new players joining (rare in game scene, but correct)
+        Debug.Log("[PlayerUIManager] Subscribing to OnLoadEventCompleted");
+        NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(
+        string sceneName,
+        LoadSceneMode mode,
+        List<ulong> clientsCompleted,
+        List<ulong> clientsTimedOut)
+    {
+        Debug.Log($"[PlayerUIManager] OnSceneLoaded() → Scene: {sceneName}");
+
+        // Only run in your game scene
+        if (sceneName != "Game")
+        {
+            Debug.Log("[PlayerUIManager] Scene is not 'Game' → ignoring");
+            return;
+        }
+
+        Debug.Log("[PlayerUIManager] Scene is Game → adding existing players");
+
+        foreach (var kvp in NetworkManager.Singleton.ConnectedClients)
+        {
+            var playerObj = kvp.Value.PlayerObject;
+
+            Debug.Log($"[PlayerUIManager] Checking player {kvp.Key} → PlayerObject: {playerObj}");
+
+            TryAddPlayer(playerObj);
+        }
+
+        Debug.Log("[PlayerUIManager] Registering connect/disconnect callbacks");
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
+
+        Debug.Log("[PlayerUIManager] Unsubscribing from OnLoadEventCompleted");
+        NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnSceneLoaded;
     }
 
     private void OnClientConnected(ulong clientId)
     {
+        Debug.Log($"[PlayerUIManager] OnClientConnected({clientId})");
+
         var playerObj = NetworkManager.Singleton.ConnectedClients[clientId].PlayerObject;
+        Debug.Log($"[PlayerUIManager] PlayerObject for {clientId}: {playerObj}");
+
         TryAddPlayer(playerObj);
     }
 
     private void OnClientDisconnected(ulong clientId)
     {
+        Debug.Log($"[PlayerUIManager] OnClientDisconnected({clientId})");
+
         if (entries.TryGetValue(clientId, out var entry))
         {
+            Debug.Log($"[PlayerUIManager] Removing UI entry for {clientId}");
             Destroy(entry.gameObject);
             entries.Remove(clientId);
+        }
+        else
+        {
+            Debug.Log($"[PlayerUIManager] No UI entry found for {clientId}");
         }
     }
 
     public void TryAddPlayer(NetworkObject playerObj)
     {
-        if (playerObj == null) return;
+        Debug.Log($"[PlayerUIManager] TryAddPlayer() → PlayerObject: {playerObj}");
+
+        if (playerObj == null)
+        {
+            Debug.Log("[PlayerUIManager] PlayerObject is NULL → abort");
+            return;
+        }
 
         var health = playerObj.GetComponent<PlayerHealth>();
-        if (health == null) return;
+        Debug.Log($"[PlayerUIManager] PlayerHealth component: {health}");
 
-        if (entries.ContainsKey(playerObj.OwnerClientId))
-            return; // prevent duplicates
+        if (health == null)
+        {
+            Debug.Log("[PlayerUIManager] No PlayerHealth found → abort");
+            return;
+        }
 
+        ulong clientId = playerObj.OwnerClientId;
+
+        if (entries.ContainsKey(clientId))
+        {
+            Debug.Log($"[PlayerUIManager] UI entry already exists for {clientId} → abort");
+            return;
+        }
+
+        Debug.Log($"[PlayerUIManager] Instantiating UI entry for {clientId}");
         var entryGO = Instantiate(uiEntryPrefab, uiContainer);
+
+        Debug.Log("[PlayerUIManager] Getting PlayerUIEntry component");
         var entry = entryGO.GetComponent<PlayerUIEntry>();
+
+        Debug.Log("[PlayerUIManager] Initializing UI entry");
         entry.Initialize(health);
 
-        entries[playerObj.OwnerClientId] = entry;
+        Debug.Log($"[PlayerUIManager] Storing UI entry for {clientId}");
+        entries[clientId] = entry;
     }
 }

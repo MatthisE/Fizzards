@@ -67,6 +67,8 @@ public class PlayerHealth : NetworkBehaviour
             HideForOthersClientRpc();
         } else
         {
+            UnityEngine.Debug.Log($"Player {OwnerClientId} flashed.");
+
             HitFlashClientRpc();
         }
     }

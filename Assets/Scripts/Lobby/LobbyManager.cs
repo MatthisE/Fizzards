@@ -84,7 +84,7 @@ public class LobbyManager : MonoBehaviour
             return;
 
         NetworkManager.Singleton.SceneManager.LoadScene(
-            "Main",
+            "Game",
             LoadSceneMode.Single
         );
     }

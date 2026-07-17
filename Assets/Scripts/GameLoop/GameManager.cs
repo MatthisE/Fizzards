@@ -1,5 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : NetworkBehaviour
 {
@@ -47,5 +48,19 @@ public class GameManager : NetworkBehaviour
     {
         // TODO: show winner UI, restart game, etc.
         Debug.Log($"Game Over! Winner is {winnerId}");
+
+        LoadSceneByName("Victory");
     }
+
+    public void LoadSceneByName(string sceneName)
+    {
+        if (!IsServer)
+            return;
+
+        NetworkManager.Singleton.SceneManager.LoadScene(
+            sceneName,
+            LoadSceneMode.Single
+        );
+    }
+
 }
