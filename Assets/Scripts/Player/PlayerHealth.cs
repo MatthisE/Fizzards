@@ -17,6 +17,12 @@ public class PlayerHealth : NetworkBehaviour
     [SerializeField] private GameObject aimIndicator;
     [SerializeField] private Material transparentMaterial;
 
+    public NetworkVariable<bool> IsDead = new(
+        false,
+        NetworkVariableReadPermission.Everyone,
+        NetworkVariableWritePermission.Server
+    );
+
     [Header("Hit Flash (multiple meshes)")]
     [SerializeField] private Renderer[] renderers;   // assign all body parts here
     [SerializeField] private Color hitColor = Color.red;
@@ -51,11 +57,15 @@ public class PlayerHealth : NetworkBehaviour
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
     public void TakeDamageRpc(int amount)
     {
+        // FIX: Prevent ANY damage or flash after death
+        if (IsDead.Value)
+            return;
+
         CurrentHealth.Value = Mathf.Max(CurrentHealth.Value - amount, 0);
 
         if (CurrentHealth.Value <= 0)
         {
-            UnityEngine.Debug.Log($"Player {OwnerClientId} died.");
+            IsDead.Value = true; 
 
             if (IsServer)
                 GameManager.Instance.NotifyPlayerDied();
@@ -65,10 +75,15 @@ public class PlayerHealth : NetworkBehaviour
             SetDeadLayerClientRpc();
             DisableLocalScriptsClientRpc();
             HideForOthersClientRpc();
-        } else
-        {
-            UnityEngine.Debug.Log($"Player {OwnerClientId} flashed.");
 
+            // FIX: Ensure ghost material is ALWAYS applied even if flash happened late
+            ForceGhostMaterialClientRpc();
+
+            // FIX: Stop any running flash coroutine immediately
+            StopFlashClientRpc();
+        } 
+        else
+        {
             HitFlashClientRpc();
         }
     }
@@ -134,8 +149,31 @@ public class PlayerHealth : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     private void HitFlashClientRpc()
     {
+        // FIX: Never flash if dead
+        if (IsDead.Value)
+            return;
+
         if (!isFlashing)
             StartCoroutine(FlashRoutine());
+    }
+
+    // FIX: RPC to stop flash immediately when dying
+    [Rpc(SendTo.Everyone)]
+    private void StopFlashClientRpc()
+    {
+        isFlashing = false;
+        StopAllCoroutines();
+    }
+
+    // FIX: RPC to force ghost material if anything restored original color
+    [Rpc(SendTo.Everyone)]
+    private void ForceGhostMaterialClientRpc()
+    {
+        if (!IsOwner)
+            return;
+
+        foreach (var r in renderers)
+            r.material = new Material(transparentMaterial);
     }
 
     private System.Collections.IEnumerator FlashRoutine()
@@ -146,11 +184,23 @@ public class PlayerHealth : NetworkBehaviour
         foreach (var r in renderers)
             r.material.color = hitColor;
 
-        yield return new WaitForSeconds(flashDuration);
+        float t = 0f;
+        while (t < flashDuration)
+        {
+            // FIX: Stop immediately if dead
+            if (IsDead.Value)
+                yield break;
 
-        // restore original colors
-        for (int i = 0; i < renderers.Length; i++)
-            renderers[i].material.color = originalColors[i];
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        // restore original colors ONLY if alive
+        if (!IsDead.Value)
+        {
+            for (int i = 0; i < renderers.Length; i++)
+                renderers[i].material.color = originalColors[i];
+        }
 
         isFlashing = false;
     }

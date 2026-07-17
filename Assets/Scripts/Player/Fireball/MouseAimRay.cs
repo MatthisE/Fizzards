@@ -65,6 +65,18 @@ public class MouseAimRay : NetworkBehaviour
         }
     }
 
+    public void ResetIndicator()
+    {
+        if (!IsOwner) return;
+
+        if (aimIndicator != null)
+        {
+            aimIndicator.SetActive(true);
+            currentIndicatorScale = aimIndicator.transform.localScale.x;
+            targetIndicatorScale = currentIndicatorScale;
+        }
+    }
+
     private void UpdateAimIndicator(bool hitWorld, RaycastHit hit)
     {
         if (aimIndicator == null) return;

@@ -12,6 +12,15 @@ public class DestroyOnCollision : NetworkBehaviour
             health.TakeDamageRpc(25);
         }
 
-        NetworkObject.Despawn();
+        var netObj = GetComponent<NetworkObject>();
+
+        if (netObj != null && netObj.IsSpawned)
+        {
+            netObj.Despawn();
+        }
+        else
+        {
+            Destroy(gameObject); // fallback for non-networked or not-yet-spawned objects
+        }
     }
 }
