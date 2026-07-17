@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -52,17 +53,21 @@ public class PlayerHealth : NetworkBehaviour
     {
         CurrentHealth.Value = Mathf.Max(CurrentHealth.Value - amount, 0);
 
-        HitFlashClientRpc();
-
         if (CurrentHealth.Value <= 0)
         {
-            Debug.Log($"Player {OwnerClientId} died.");
+            UnityEngine.Debug.Log($"Player {OwnerClientId} died.");
+
+            if (IsServer)
+                GameManager.Instance.NotifyPlayerDied();
 
             ApplyTransparentMaterialClientRpc();
             DisableAimIndicatorClientRpc();
             SetDeadLayerClientRpc();
             DisableLocalScriptsClientRpc();
             HideForOthersClientRpc();
+        } else
+        {
+            HitFlashClientRpc();
         }
     }
 
@@ -74,7 +79,9 @@ public class PlayerHealth : NetworkBehaviour
             return;
 
         foreach (var r in renderers)
-            r.material = transparentMaterial;
+        {
+            r.material = new Material(transparentMaterial);
+        }
     }
 
     [Rpc(SendTo.Everyone)]
@@ -125,10 +132,6 @@ public class PlayerHealth : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     private void HitFlashClientRpc()
     {
-        // Do NOT flash if dead
-        if (CurrentHealth.Value <= 0)
-            return;
-
         if (!isFlashing)
             StartCoroutine(FlashRoutine());
     }
