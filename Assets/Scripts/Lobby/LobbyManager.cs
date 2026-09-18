@@ -10,6 +10,10 @@ public class LobbyManager : MonoBehaviour
     [SerializeField] private TMP_InputField ipInputField;
     [SerializeField] private TMP_Text errorText;
     [SerializeField] private TMP_Text ipText;
+    [SerializeField] private TMP_InputField playerNameInput;
+
+    public static string LocalPlayerName = "Unnamed";
+
 
     private void Start()
     {
@@ -40,6 +44,8 @@ public class LobbyManager : MonoBehaviour
         string ip = GetLocalIPAddress();
         Debug.Log($"Host started on IP: {ip}");
         ipText.text = $"{ip}";
+
+        PlayerListManager.Instance.SubmitNameRpc(LocalPlayerName, NetworkManager.Singleton.LocalClientId);
     }
 
     public void JoinGame()
@@ -56,6 +62,24 @@ public class LobbyManager : MonoBehaviour
         Debug.Log($"Client connecting to {ip}");
     }
 
+    public void OnNameChanged()
+    {
+        LocalPlayerName = playerNameInput.text;
+    }
+
+    public void SetPlayerName()
+    {
+        LocalPlayerName = playerNameInput.text;
+
+        // Send update to server
+        PlayerListManager.Instance.SubmitNameRpc(
+            LocalPlayerName,
+            NetworkManager.Singleton.LocalClientId
+        );
+    }
+
+
+
     private void OnClientConnected(ulong clientId)
     {
         // Only the host should log this
@@ -63,8 +87,12 @@ public class LobbyManager : MonoBehaviour
         {
             Debug.Log($"Client connected: {clientId}");
         }
-    }
 
+        if (NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsHost)
+        {
+            PlayerListManager.Instance.SubmitNameRpc(LocalPlayerName, clientId);
+        }
+    }
 
     private void OnClientDisconnected(ulong clientId)
     {

@@ -49,6 +49,9 @@ public class GameManager : NetworkBehaviour
         // TODO: show winner UI, restart game, etc.
         Debug.Log($"Game Over! Winner is {winnerId}");
 
+        // Save globally
+        GlobalGameState.WinnerId = winnerId;
+
         LoadSceneByName("Victory");
     }
 
