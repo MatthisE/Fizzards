@@ -64,10 +64,15 @@ public class PlayerUIManager : NetworkBehaviour
     {
         if (entries.TryGetValue(clientId, out var entry))
         {
-            Destroy(entry.gameObject);
+            if (entry != null && entry.gameObject != null)
+            {
+                Destroy(entry.gameObject);
+            }
+
             entries.Remove(clientId);
         }
     }
+
 
     public void TryAddPlayer(NetworkObject playerObj)
     {
@@ -96,4 +101,15 @@ public class PlayerUIManager : NetworkBehaviour
         entry.Initialize(health);
         entries[clientId] = entry;
     }
+
+    private new void OnDestroy()
+    {
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnSceneLoaded;
+        }
+    }
+
 }

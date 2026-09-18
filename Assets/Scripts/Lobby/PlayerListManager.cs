@@ -10,30 +10,32 @@ public class PlayerListManager : NetworkBehaviour
     private void Awake()
     {
         Instance = this;
-        Players = new NetworkList<PlayerData>();
     }
 
     public override void OnNetworkSpawn()
     {
-        if (!IsServer) return;
+        // NetworkList MUSS existieren, egal ob Server oder Client
+        if (Players == null)
+            Players = new NetworkList<PlayerData>();
 
-        // Host + Clients, die bereits verbunden sind, hinzufügen
-        foreach (var kvp in NetworkManager.Singleton.ConnectedClients)
+        if (IsServer)
         {
-            AddPlayerIfMissing(kvp.Key);
-        }
+            foreach (var kvp in NetworkManager.Singleton.ConnectedClients)
+            {
+                AddPlayerIfMissing(kvp.Key);
+            }
 
-        // Neue Verbindungen tracken
-        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
+            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
+        }
     }
 
-    private void OnClientConnected(ulong clientId)
+    public void OnClientConnected(ulong clientId)
     {
         AddPlayerIfMissing(clientId);
     }
 
-    private void OnClientDisconnected(ulong clientId)
+    public void OnClientDisconnected(ulong clientId)
     {
         for (int i = 0; i < Players.Count; i++)
         {
@@ -74,4 +76,14 @@ public class PlayerListManager : NetworkBehaviour
             }
         }
     }
+
+    private new void OnDestroy()
+    {
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
+        }
+    }
+
 }
