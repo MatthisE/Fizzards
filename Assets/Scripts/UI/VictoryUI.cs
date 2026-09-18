@@ -1,5 +1,7 @@
 using UnityEngine;
 using TMPro;
+using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
 public class VictoryUI : MonoBehaviour
 {
@@ -7,6 +9,23 @@ public class VictoryUI : MonoBehaviour
 
     private void Start()
     {
-        winnerText.text = $"Player {GlobalGameState.WinnerId} won!!!";
+        var gm = GameManager.Instance;
+        if (gm != null)
+        {
+            var winnerId = gm.WinnerId.Value;
+            winnerText.text = $"Player {winnerId} won!!!";
+        }
+        else
+        {
+            winnerText.text = "No winner found.";
+        }
+    }
+
+    public void LoadSceneByName(string sceneName)
+    {
+        NetworkManager.Singleton.SceneManager.LoadScene(
+            sceneName,
+            LoadSceneMode.Single
+        );
     }
 }

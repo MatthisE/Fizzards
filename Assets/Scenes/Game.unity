@@ -1404,6 +1404,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 1016007983993429920, guid: abde370f8ed919944ad6427c50b8de59, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3460208260414027307, guid: abde370f8ed919944ad6427c50b8de59, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 3758248376

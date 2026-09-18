@@ -6,9 +6,18 @@ public class GameManager : NetworkBehaviour
 {
     public static GameManager Instance;
 
+    public NetworkVariable<ulong> WinnerId = new NetworkVariable<ulong>();
+
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     // Called by PlayerHealth when a player dies.
@@ -46,11 +55,10 @@ public class GameManager : NetworkBehaviour
 
     private void OnWinnerFound(ulong winnerId)
     {
-        // TODO: show winner UI, restart game, etc.
         Debug.Log($"Game Over! Winner is {winnerId}");
 
-        // Save globally
-        GlobalGameState.WinnerId = winnerId;
+        // networked state
+        WinnerId.Value = winnerId;
 
         LoadSceneByName("Victory");
     }
@@ -65,5 +73,4 @@ public class GameManager : NetworkBehaviour
             LoadSceneMode.Single
         );
     }
-
 }

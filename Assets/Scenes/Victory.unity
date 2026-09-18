@@ -556,6 +556,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: GameManager
       objectReference: {fileID: 0}
+    - target: {fileID: 1016007983993429920, guid: abde370f8ed919944ad6427c50b8de59, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3460208260414027307, guid: abde370f8ed919944ad6427c50b8de59, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 2596557031
@@ -569,17 +573,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: abde370f8ed919944ad6427c50b8de59, type: 3}
---- !u!114 &383032572 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 3648506377645091639, guid: abde370f8ed919944ad6427c50b8de59, type: 3}
-  m_PrefabInstance: {fileID: 383032571}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e7c98c2ca0f8f5149b6855417e1a5c6b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameManager
 --- !u!1 &509099745
 GameObject:
   m_ObjectHideFlags: 0
@@ -1101,8 +1094,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 383032572}
-        m_TargetAssemblyTypeName: GameManager, Assembly-CSharp
+      - m_Target: {fileID: 509099749}
+        m_TargetAssemblyTypeName: VictoryUI, Assembly-CSharp
         m_MethodName: LoadSceneByName
         m_Mode: 5
         m_Arguments:
