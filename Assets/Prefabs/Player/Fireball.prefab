@@ -154,6 +154,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DestroyOnCollision
   ShowTopMostFoldoutHeaderGroup: 1
+  firePrefab: {fileID: 3668589022843259665, guid: 655cc0411c611b542a9c769fda2bd564, type: 3}
 --- !u!54 &6047676805107484967
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -27,6 +27,7 @@ public class PlayerHealth : NetworkBehaviour
     [SerializeField] private Renderer[] renderers;   // assign all body parts here
     [SerializeField] private Color hitColor = Color.red;
     [SerializeField] private float flashDuration = 0.15f;
+    private float flashEndTime = 0f;
 
     private Color[] originalColors;
     private bool isFlashing = false;
@@ -39,6 +40,26 @@ public class PlayerHealth : NetworkBehaviour
         CacheOriginalColors();
 
         CurrentHealth.OnValueChanged += OnHealthChanged;
+    }
+
+    private void Update()
+    {
+        if (IsDead.Value)
+            return;
+
+        if (Time.time >= flashEndTime && isFlashing)
+        {
+            // Flash over, restore original color
+            for (int i = 0; i < renderers.Length; i++)
+                renderers[i].material.color = originalColors[i];
+
+            isFlashing = false;
+        }
+        else if (Time.time < flashEndTime)
+        {
+            // Flash activ
+            isFlashing = true;
+        }
     }
 
     private void CacheOriginalColors()
@@ -149,12 +170,14 @@ public class PlayerHealth : NetworkBehaviour
     [Rpc(SendTo.Everyone)]
     private void HitFlashClientRpc()
     {
-        // FIX: Never flash if dead
         if (IsDead.Value)
             return;
 
-        if (!isFlashing)
-            StartCoroutine(FlashRoutine());
+        // Extend flash duration with every hit
+        flashEndTime = Time.time + flashDuration;
+
+        foreach (var r in renderers)
+            r.material.color = hitColor;
     }
 
     // FIX: RPC to stop flash immediately when dying
@@ -174,34 +197,5 @@ public class PlayerHealth : NetworkBehaviour
 
         foreach (var r in renderers)
             r.material = new Material(transparentMaterial);
-    }
-
-    private System.Collections.IEnumerator FlashRoutine()
-    {
-        isFlashing = true;
-
-        // flash all meshes red
-        foreach (var r in renderers)
-            r.material.color = hitColor;
-
-        float t = 0f;
-        while (t < flashDuration)
-        {
-            // FIX: Stop immediately if dead
-            if (IsDead.Value)
-                yield break;
-
-            t += Time.deltaTime;
-            yield return null;
-        }
-
-        // restore original colors ONLY if alive
-        if (!IsDead.Value)
-        {
-            for (int i = 0; i < renderers.Length; i++)
-                renderers[i].material.color = originalColors[i];
-        }
-
-        isFlashing = false;
     }
 }
