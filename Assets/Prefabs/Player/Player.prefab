@@ -402,6 +402,11 @@ MonoBehaviour:
     m_InternalValue: 100
   aimIndicator: {fileID: 7310424043214278402}
   transparentMaterial: {fileID: 2100000, guid: 34be970a0fc0f0e4a80e96e137d6e48f, type: 2}
+  IsDead:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
   renderers:
   - {fileID: 8145462653850566822}
   - {fileID: 4207504740572122093}
@@ -891,7 +896,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7415732538711362434}
-  m_Enabled: 0
+  m_Enabled: 1
 --- !u!114 &7263855467554573971
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -951,5 +956,5 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   target: {fileID: 6341037970647938713}
   distance: 10
-  maxRotationSpeed: 80
+  maxRotationSpeed: 2
   deadZone: 0.6

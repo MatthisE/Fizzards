@@ -8,10 +8,12 @@ public class OrbitCamera : NetworkBehaviour
     public float distance = 10f;
 
     public float maxRotationSpeed = 80f;
+    public float sensitivity = 0.3f;
     public float deadZone = 0.6f;
 
     private float yaw;
     private float pitch;
+    private bool wasRotating = false;
 
     public override void OnNetworkSpawn()
     {
@@ -32,23 +34,50 @@ public class OrbitCamera : NetworkBehaviour
         pitch = angles.x;
     }
 
-    void LateUpdate()
+   void LateUpdate()
     {
         if (!IsOwner) return;
         if (!target) return;
 
-        Vector2 mouse = Mouse.current.position.ReadValue();
-        Vector2 center = new Vector2(Screen.width / 2f, Screen.height / 2f);
-        Vector2 offset = (mouse - center) / center;
+        bool rotating = Mouse.current.rightButton.isPressed;
 
-        float x = Mathf.Abs(offset.x) > deadZone ? offset.x : 0f;
-        float y = Mathf.Abs(offset.y) > deadZone ? offset.y : 0f;
+        Vector2 delta = Vector2.zero;
 
-        x = Mathf.Sign(x) * Mathf.Pow(Mathf.Abs(x), 3f);
-        y = Mathf.Sign(y) * Mathf.Pow(Mathf.Abs(y), 3f);
+        if (rotating)
+        {
+            // Read delta only while rotating
+            delta = Mouse.current.delta.ReadValue();
 
-        yaw += x * maxRotationSpeed * Time.deltaTime;
-        pitch += -y * maxRotationSpeed * Time.deltaTime;
+            // Clamp spikes (Unity sometimes sends huge values)
+            delta = Vector2.ClampMagnitude(delta, 20f);
+
+            // --- EDGE SCROLL ADDITION ---
+            Vector2 mouse = Mouse.current.position.ReadValue();
+            Vector2 center = new Vector2(Screen.width / 2f, Screen.height / 2f);
+            Vector2 offset = (mouse - center) / center;
+
+            float edgeX = Mathf.Abs(offset.x) > deadZone ? offset.x : 0f;
+            float edgeY = Mathf.Abs(offset.y) > deadZone ? offset.y : 0f;
+
+            edgeX = Mathf.Sign(edgeX) * Mathf.Pow(Mathf.Abs(edgeX), 3f);
+            edgeY = Mathf.Sign(edgeY) * Mathf.Pow(Mathf.Abs(edgeY), 3f);
+
+            // Add edge movement to delta
+            delta += new Vector2(edgeX * 50f, edgeY * 50f);
+
+            // --- NEW: MAX ROTATION SPEED ---
+            delta = Vector2.ClampMagnitude(delta, maxRotationSpeed);
+        }
+        else if (wasRotating)
+        {
+            // Right-click was just released → clear leftover movement
+            delta = Vector2.zero;
+        }
+
+        wasRotating = rotating;
+
+        yaw += delta.x * sensitivity;
+        pitch += -delta.y * sensitivity;
 
         pitch = Mathf.Clamp(pitch, -10f, 35f);
 
@@ -61,4 +90,6 @@ public class OrbitCamera : NetworkBehaviour
 
         transform.SetPositionAndRotation(position, rotation);
     }
+
+
 }
