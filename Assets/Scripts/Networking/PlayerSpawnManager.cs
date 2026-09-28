@@ -21,7 +21,16 @@ public class PlayerSpawnManager : NetworkBehaviour
     {
         int index = (int)(clientId % (ulong)spawnPoints.Length);
 
-        var player = Instantiate(playerPrefab, spawnPoints[index].position, Quaternion.identity);
+        Transform spawn = spawnPoints[index];
+
+        // Spawn player at position + rotation of the blue arrow
+        var player = Instantiate(
+            playerPrefab,
+            spawn.position,
+            Quaternion.LookRotation(spawn.forward, Vector3.up)
+        );
+
         player.GetComponent<NetworkObject>().SpawnAsPlayerObject(clientId);
     }
+
 }
