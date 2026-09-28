@@ -8,22 +8,20 @@ public class ExitButton : MonoBehaviour
     {
         var nm = NetworkManager.Singleton;
 
-        // Case 1: You are a CLIENT connected to a host
-        if (nm.IsClient && !nm.IsHost)
-        {
-            nm.Shutdown(); // disconnect from host
-            SceneManager.LoadScene("Title");
-            return;
-        }
-
-        // Case 2: You are the HOST
+        // HOST: end game for everyone
         if (nm.IsHost)
         {
-            // Unregister callbacks BEFORE shutdown
+            // Tell all clients to return to lobby (and destroy their PlayerListManager)
+            GameManager.Instance.ReturnToLobbyRpc();
+
+            // Host cleanup
             if (PlayerListManager.Instance != null)
             {
-                NetworkManager.Singleton.OnClientConnectedCallback -= PlayerListManager.Instance.OnClientConnected;
-                NetworkManager.Singleton.OnClientDisconnectCallback -= PlayerListManager.Instance.OnClientDisconnected;
+                nm.OnClientConnectedCallback -= PlayerListManager.Instance.OnClientConnected;
+                nm.OnClientDisconnectCallback -= PlayerListManager.Instance.OnClientDisconnected;
+
+                PlayerListManager.Instance.ClearPlayersRpc(); // server clears list
+                Object.Destroy(PlayerListManager.Instance.gameObject);
             }
 
             nm.Shutdown();
@@ -31,7 +29,20 @@ public class ExitButton : MonoBehaviour
             return;
         }
 
-        // Case 3: You are not connected at all (just in lobby without hosting)
+        // CLIENT: user manually exits
+        if (nm.IsClient && !nm.IsHost)
+        {
+            if (PlayerListManager.Instance != null)
+            {
+                Object.Destroy(PlayerListManager.Instance.gameObject);
+            }
+
+            nm.Shutdown();
+            SceneManager.LoadScene("Title");
+            return;
+        }
+
+        // Not connected at all
         SceneManager.LoadScene("Title");
     }
 }

@@ -9,7 +9,14 @@ public class PlayerListManager : NetworkBehaviour
 
     private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         Instance = this;
+        DontDestroyOnLoad(gameObject);
     }
 
     public override void OnNetworkSpawn()
@@ -85,5 +92,12 @@ public class PlayerListManager : NetworkBehaviour
             NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
         }
     }
+
+    [Rpc(SendTo.NotServer)]
+    public void ClearPlayersRpc()
+    {
+        Players.Clear();
+    }
+
 
 }

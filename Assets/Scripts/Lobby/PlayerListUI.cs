@@ -40,7 +40,7 @@ public class PlayerListUI : MonoBehaviour
 
         foreach (var player in PlayerListManager.Instance.Players)
         {
-            playerListText.text += $"Player {player.ClientId}\n";
+            playerListText.text += $"{player.PlayerName}\n";
         }
     }
 }

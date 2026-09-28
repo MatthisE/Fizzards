@@ -11,7 +11,24 @@ public class PlayerUIEntry : MonoBehaviour
     public void Initialize(PlayerHealth player)
     {
         target = player;
-        nameText.text = $"Player {player.OwnerClientId}";
+        
+        
+        var players = PlayerListManager.Instance.Players;
+
+        string playerName = $"Player {player.OwnerClientId}"; // fallback
+
+        foreach (var p in players)
+        {
+            if (p.ClientId == player.OwnerClientId)
+            {
+                playerName = p.PlayerName.ToString();
+                break;
+            }
+        }
+
+        nameText.text = playerName;
+
+
         UpdateHealth(player.CurrentHealth.Value);
 
         player.CurrentHealth.OnValueChanged += (oldVal, newVal) =>

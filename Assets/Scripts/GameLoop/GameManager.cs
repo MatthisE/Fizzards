@@ -73,4 +73,17 @@ public class GameManager : NetworkBehaviour
             LoadSceneMode.Single
         );
     }
+
+    [Rpc(SendTo.NotServer)]
+    public void ReturnToLobbyRpc()
+    {
+        // Destroy client-side PlayerListManager if it exists
+        if (PlayerListManager.Instance != null)
+        {
+            Object.Destroy(PlayerListManager.Instance.gameObject);
+        }
+
+        // Just go back to lobby – NO Shutdown here
+        SceneManager.LoadScene("Title");
+    }
 }
