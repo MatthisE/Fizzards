@@ -7,8 +7,8 @@ public class OrbitCamera : NetworkBehaviour
     public Transform target;
     public float distance = 10f;
 
-    public float maxRotationSpeed = 80f;
-    public float sensitivity = 0.3f;
+    public float maxRotationSpeed = 30f;
+    public float sensitivity = 0.2f;
     public float deadZone = 0.6f;
 
     private float yaw;

@@ -4,7 +4,7 @@ using UnityEngine;
 public class FireDamageZone : NetworkBehaviour
 {
     [SerializeField] private int damagePerTick = 1;
-    [SerializeField] private float tickInterval = 0.3f;
+    [SerializeField] private float tickInterval = 0.01f;
 
     private float nextTickTime = 0f;
 

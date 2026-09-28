@@ -110,7 +110,7 @@ CapsuleCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2227806587675840193}
-  m_Material: {fileID: 13400000, guid: d51f609a45f82a94aa71d8569d1fb48d, type: 2}
+  m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -311,7 +311,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 4112441111
+  GlobalObjectIdHash: 1322891442
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -956,5 +956,6 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   target: {fileID: 6341037970647938713}
   distance: 10
-  maxRotationSpeed: 2
+  maxRotationSpeed: 30
+  sensitivity: 0.2
   deadZone: 0.6
