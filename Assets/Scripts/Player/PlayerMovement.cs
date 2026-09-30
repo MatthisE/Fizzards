@@ -22,6 +22,9 @@ public class PlayerMovement : NetworkBehaviour
     [Header("Camera")]
     public Transform cameraTransform;
 
+    [Header("Animation")]
+    [SerializeField] private Animator anim;
+
     private bool jumpHeld;
     private float jumpTimer;
 
@@ -106,6 +109,9 @@ public class PlayerMovement : NetworkBehaviour
         vel.y = yVel;
 
         rb.linearVelocity = vel;
+
+        bool isWalking = rb.linearVelocity.magnitude > 0.1f;
+        anim.SetBool("isWalking", isWalking);
     }
 
     private void HandleJumpHold()
