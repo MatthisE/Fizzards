@@ -4,13 +4,15 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using System.Net;
 using System.Net.Sockets;
+using System.Collections;
 
 public class LobbyManager : MonoBehaviour
 {
     [SerializeField] private TMP_InputField ipInputField;
     [SerializeField] private TMP_Text errorText;
-    [SerializeField] private TMP_Text ipText;
+    [SerializeField] private TMP_InputField ipText;
     [SerializeField] private TMP_InputField playerNameInput;
+    [SerializeField] private GameObject startButton;
 
     public static string LocalPlayerName = "Unnamed";
 
@@ -39,6 +41,8 @@ public class LobbyManager : MonoBehaviour
     {
         NetworkManager.Singleton.StartHost();
 
+        startButton.SetActive(true);
+
         string ip = GetLocalIPAddress();
         Debug.Log($"Host started on IP: {ip}");
         ipText.text = $"{ip}";
@@ -58,6 +62,26 @@ public class LobbyManager : MonoBehaviour
 
         NetworkManager.Singleton.StartClient();
         Debug.Log($"Client connecting to {ip}");
+
+        StartCoroutine(ConnectionTimeout(ip));
+    }
+
+    private IEnumerator ConnectionTimeout(string ip)
+    {
+        float timeout = 5f;
+        float timer = 0f;
+
+        while (timer < timeout)
+        {
+            if (NetworkManager.Singleton.IsConnectedClient)
+                yield break;
+
+            timer += Time.deltaTime;
+            yield return null;
+        }
+
+        StartCoroutine(ShowError($"Could not connect to IP: {ip}"));
+        NetworkManager.Singleton.Shutdown();
     }
 
     public void OnNameChanged()
@@ -74,8 +98,6 @@ public class LobbyManager : MonoBehaviour
             NetworkManager.Singleton.LocalClientId
         );
     }
-
-
 
     private void OnClientConnected(ulong clientId)
     {
@@ -94,11 +116,22 @@ public class LobbyManager : MonoBehaviour
     {
         if (clientId == NetworkManager.Singleton.LocalClientId)
         {
-            //errorText.text = "Could not connect to a host";
-            //errorText.gameObject.SetActive(true);
+            StartCoroutine(
+                ShowError("Could not connect to the IP address.")
+            );
 
             Debug.Log($"Could not connect to a host");
         }
+    }
+
+    private IEnumerator ShowError(string message)
+    {
+        errorText.text = message;
+        errorText.gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(3f);
+
+        errorText.gameObject.SetActive(false);
     }
 
     public void StartGame()
