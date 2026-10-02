@@ -27,9 +27,14 @@ public class PlayerHealth : NetworkBehaviour
     [SerializeField] private Color hitColor = Color.red;
     [SerializeField] private float flashDuration = 0.15f;
     private float flashEndTime = 0f;
-
     private Color[][] originalColors;
     private bool isFlashing = false;
+
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip damageSound;
+    [SerializeField] private AudioClip deathSound;
+
 
     public override void OnNetworkSpawn()
     {
@@ -97,11 +102,27 @@ public class PlayerHealth : NetworkBehaviour
             HideForOthersClientRpc();
             ForceGhostMaterialClientRpc();
             StopFlashClientRpc();
+            PlayDeathSoundClientRpc();
         }
         else
         {
             HitFlashClientRpc();
+            PlayDamageSoundClientRpc();
         }
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayDamageSoundClientRpc()
+    {
+        if (audioSource && damageSound)
+            audioSource.PlayOneShot(damageSound);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayDeathSoundClientRpc()
+    {
+        if (audioSource && deathSound)
+            audioSource.PlayOneShot(deathSound);
     }
 
     [Rpc(SendTo.Everyone)]

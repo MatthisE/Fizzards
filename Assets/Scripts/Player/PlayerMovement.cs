@@ -23,6 +23,12 @@ public class PlayerMovement : NetworkBehaviour
     [Header("Animation")]
     [SerializeField] private Animator anim;
 
+    [Header("Audio")]
+    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioClip footstepClip;
+    [SerializeField] private AudioClip jumpClip;
+
+
     private bool jumpHeld;
     private float jumpTimer;
 
@@ -66,6 +72,8 @@ public class PlayerMovement : NetworkBehaviour
 
                 float scaledJumpForce = jumpForce * jumpSpeedMultiplier;
                 rb.AddForce(Vector3.up * scaledJumpForce, ForceMode.Impulse);
+
+                audioSource.PlayOneShot(jumpClip);
             }
 
             jumpHeld = true;
@@ -109,6 +117,12 @@ public class PlayerMovement : NetworkBehaviour
 
         bool isWalking = rb.linearVelocity.magnitude > 0.1f;
         anim.SetBool("isWalking", isWalking);
+
+        if (isWalking && IsGrounded())
+        {
+            if (!audioSource.isPlaying)
+                audioSource.PlayOneShot(footstepClip);
+        }
     }
 
     private void HandleJumpHold()
