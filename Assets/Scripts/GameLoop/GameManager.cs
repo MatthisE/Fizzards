@@ -20,7 +20,7 @@ public class GameManager : NetworkBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    // Called by PlayerHealth when a player dies.
+    // Called by PlayerHealth when a player dies
     public void NotifyPlayerDied()
     {
         if (!IsServer)
@@ -57,7 +57,6 @@ public class GameManager : NetworkBehaviour
     {
         Debug.Log($"Game Over! Winner is {winnerId}");
 
-        // networked state
         WinnerId.Value = winnerId;
 
         LoadSceneByName("Victory");
@@ -77,13 +76,11 @@ public class GameManager : NetworkBehaviour
     [Rpc(SendTo.NotServer)]
     public void ReturnToLobbyRpc()
     {
-        // Destroy client-side PlayerListManager if it exists
         if (PlayerListManager.Instance != null)
         {
             Object.Destroy(PlayerListManager.Instance.gameObject);
         }
 
-        // Just go back to lobby – NO Shutdown here
         SceneManager.LoadScene("Title");
     }
 }

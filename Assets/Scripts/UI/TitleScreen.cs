@@ -10,7 +10,6 @@ public class TitleScreen : MonoBehaviour
 
     public void OnQuitClicked()
     {
-        // Quit the application
         Application.Quit();
     }
 }
