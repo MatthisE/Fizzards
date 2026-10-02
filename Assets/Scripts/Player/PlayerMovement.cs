@@ -73,7 +73,7 @@ public class PlayerMovement : NetworkBehaviour
                 float scaledJumpForce = jumpForce * jumpSpeedMultiplier;
                 rb.AddForce(Vector3.up * scaledJumpForce, ForceMode.Impulse);
 
-                audioSource.PlayOneShot(jumpClip);
+                PlayJumpSoundClientRpc();
             }
 
             jumpHeld = true;
@@ -121,7 +121,7 @@ public class PlayerMovement : NetworkBehaviour
         if (isWalking && IsGrounded())
         {
             if (!audioSource.isPlaying)
-                audioSource.PlayOneShot(footstepClip);
+                PlayFootstepSoundClientRpc();
         }
     }
 
@@ -157,4 +157,19 @@ public class PlayerMovement : NetworkBehaviour
         if (camForward.sqrMagnitude > 0.01f)
             transform.rotation = Quaternion.LookRotation(camForward);
     }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayFootstepSoundClientRpc()
+    {
+        if (audioSource && footstepClip)
+            audioSource.PlayOneShot(footstepClip);
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayJumpSoundClientRpc()
+    {
+        if (audioSource && jumpClip)
+            audioSource.PlayOneShot(jumpClip);
+    }
+
 }
