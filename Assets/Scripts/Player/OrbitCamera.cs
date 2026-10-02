@@ -19,7 +19,6 @@ public class OrbitCamera : NetworkBehaviour
     {
         if (!IsOwner)
         {
-            // Disable camera and audio listener for remote players
             GetComponent<Camera>().enabled = false;
 
             AudioListener listener = GetComponent<AudioListener>();
@@ -28,7 +27,6 @@ public class OrbitCamera : NetworkBehaviour
             return;
         }
 
-        // Owner camera initialization
         Vector3 angles = transform.eulerAngles;
         yaw = angles.y;
         pitch = angles.x;
@@ -45,13 +43,9 @@ public class OrbitCamera : NetworkBehaviour
 
         if (rotating)
         {
-            // Read delta only while rotating
             delta = Mouse.current.delta.ReadValue();
-
-            // Clamp spikes (Unity sometimes sends huge values)
             delta = Vector2.ClampMagnitude(delta, 20f);
 
-            // --- EDGE SCROLL ADDITION ---
             Vector2 mouse = Mouse.current.position.ReadValue();
             Vector2 center = new Vector2(Screen.width / 2f, Screen.height / 2f);
             Vector2 offset = (mouse - center) / center;
@@ -62,15 +56,11 @@ public class OrbitCamera : NetworkBehaviour
             edgeX = Mathf.Sign(edgeX) * Mathf.Pow(Mathf.Abs(edgeX), 3f);
             edgeY = Mathf.Sign(edgeY) * Mathf.Pow(Mathf.Abs(edgeY), 3f);
 
-            // Add edge movement to delta
             delta += new Vector2(edgeX * 50f, edgeY * 50f);
-
-            // --- NEW: MAX ROTATION SPEED ---
             delta = Vector2.ClampMagnitude(delta, maxRotationSpeed);
         }
         else if (wasRotating)
         {
-            // Right-click was just released → clear leftover movement
             delta = Vector2.zero;
         }
 

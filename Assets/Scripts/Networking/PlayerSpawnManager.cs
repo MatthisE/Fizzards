@@ -23,7 +23,6 @@ public class PlayerSpawnManager : NetworkBehaviour
 
         Transform spawn = spawnPoints[index];
 
-        // Spawn player at position + rotation of the blue arrow
         var player = Instantiate(
             playerPrefab,
             spawn.position,

@@ -17,11 +17,9 @@ public class LobbyManager : MonoBehaviour
 
     private void Start()
     {
-        // Hide error message at start
         if (errorText != null)
             errorText.gameObject.SetActive(false);
 
-        // Listen for failed connections
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
     }
@@ -71,7 +69,6 @@ public class LobbyManager : MonoBehaviour
     {
         LocalPlayerName = playerNameInput.text;
 
-        // Send update to server
         PlayerListManager.Instance.SubmitNameRpc(
             LocalPlayerName,
             NetworkManager.Singleton.LocalClientId
@@ -82,7 +79,6 @@ public class LobbyManager : MonoBehaviour
 
     private void OnClientConnected(ulong clientId)
     {
-        // Only the host should log this
         if (NetworkManager.Singleton.IsHost)
         {
             Debug.Log($"Client connected: {clientId}");
@@ -96,7 +92,6 @@ public class LobbyManager : MonoBehaviour
 
     private void OnClientDisconnected(ulong clientId)
     {
-        // Only show error for the local client
         if (clientId == NetworkManager.Singleton.LocalClientId)
         {
             //errorText.text = "Could not connect to a host";

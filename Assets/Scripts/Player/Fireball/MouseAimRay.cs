@@ -28,11 +28,9 @@ public class MouseAimRay : NetworkBehaviour
             return;
         }
 
-        // Initialize LineRenderer
         lr = rayOrigin.GetComponent<LineRenderer>();
         lr.enabled = false;
 
-        // Initialize aim indicator
         if (aimIndicator != null)
         {
             currentIndicatorScale = aimIndicator.transform.localScale.x;
@@ -52,7 +50,6 @@ public class MouseAimRay : NetworkBehaviour
 
         UpdateAimIndicator(hitWorld, hit);
 
-        // Smooth scale animation
         currentIndicatorScale = Mathf.Lerp(
             currentIndicatorScale,
             targetIndicatorScale,

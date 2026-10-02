@@ -17,11 +17,8 @@ public class VictoryUI : MonoBehaviour
         }
 
         ulong winnerId = gm.WinnerId.Value;
-
-        // Default fallback
         string winnerName = $"Player {winnerId}";
 
-        // PlayerListManager muss existieren
         if (PlayerListManager.Instance != null)
         {
             foreach (var p in PlayerListManager.Instance.Players)

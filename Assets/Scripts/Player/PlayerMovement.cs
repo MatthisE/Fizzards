@@ -15,8 +15,6 @@ public class PlayerMovement : NetworkBehaviour
     [SerializeField] private float jumpForce = 3f;
     [SerializeField] private float jumpHoldForce = 10f;
     [SerializeField] private float jumpHoldTime = 500f;
-
-    // Makes the whole jump faster without changing height
     [SerializeField] private float jumpSpeedMultiplier = 3f;
 
     [Header("Camera")]
@@ -66,7 +64,6 @@ public class PlayerMovement : NetworkBehaviour
             {
                 jumpTimer = 0f;
 
-                // Faster ascent, same height
                 float scaledJumpForce = jumpForce * jumpSpeedMultiplier;
                 rb.AddForce(Vector3.up * scaledJumpForce, ForceMode.Impulse);
             }
@@ -123,7 +120,6 @@ public class PlayerMovement : NetworkBehaviour
         jumpTimer += Time.fixedDeltaTime;
     }
 
-    // Faster jump, same height: scale gravity too
     private void ApplyScaledGravity()
     {
         if (!IsGrounded())
@@ -141,7 +137,6 @@ public class PlayerMovement : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        // Rotate player to face camera direction
         Vector3 camForward = cameraTransform.forward;
         camForward.y = 0f;
 

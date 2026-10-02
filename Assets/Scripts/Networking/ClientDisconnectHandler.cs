@@ -12,7 +12,6 @@ public class ClientDisconnectHandler : MonoBehaviour
 
     private IEnumerator RegisterWhenReady()
     {
-        // Wait until NetworkManager exists
         while (NetworkManager.Singleton == null)
             yield return null;
 

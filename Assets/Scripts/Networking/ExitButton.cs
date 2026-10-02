@@ -8,19 +8,17 @@ public class ExitButton : MonoBehaviour
     {
         var nm = NetworkManager.Singleton;
 
-        // HOST: end game for everyone
         if (nm.IsHost)
         {
-            // Tell all clients to return to lobby (and destroy their PlayerListManager)
             GameManager.Instance.ReturnToLobbyRpc();
 
-            // Host cleanup
+            // Host: cleanup
             if (PlayerListManager.Instance != null)
             {
                 nm.OnClientConnectedCallback -= PlayerListManager.Instance.OnClientConnected;
                 nm.OnClientDisconnectCallback -= PlayerListManager.Instance.OnClientDisconnected;
 
-                PlayerListManager.Instance.ClearPlayersRpc(); // server clears list
+                PlayerListManager.Instance.ClearPlayersRpc();
                 Object.Destroy(PlayerListManager.Instance.gameObject);
             }
 
@@ -29,7 +27,7 @@ public class ExitButton : MonoBehaviour
             return;
         }
 
-        // CLIENT: user manually exits
+        // Client: user manually exits
         if (nm.IsClient && !nm.IsHost)
         {
             if (PlayerListManager.Instance != null)

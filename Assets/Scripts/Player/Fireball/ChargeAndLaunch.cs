@@ -21,14 +21,13 @@ public class ChargeAndLaunch : NetworkBehaviour
     private void Awake()
     {
         playerInput = GetComponent<PlayerInput>();
-        playerInput.enabled = false;   // disable until ownership is assigned
+        playerInput.enabled = false;
     }
 
     public override void OnNetworkSpawn()
     {
         if (IsOwner)
         {
-            // enable input ONLY when ownership is confirmed
             playerInput.enabled = true;
         }
     }
@@ -45,10 +44,8 @@ public class ChargeAndLaunch : NetworkBehaviour
     {
         if (!IsOwner) return;
 
-        // Only fire on actual button press
         if (!context.started) return;
 
-        // Cooldown
         if (cooldownTimer > 0f) return;
 
         Vector3 dir = aimRay.GetAimDirection().normalized;
@@ -63,7 +60,7 @@ public class ChargeAndLaunch : NetworkBehaviour
         GameObject fb = Instantiate(spherePrefab, pos, Quaternion.identity);
 
         NetworkObject netObj = fb.GetComponent<NetworkObject>();
-        netObj.Spawn(); // everyone sees it
+        netObj.Spawn();
 
         Rigidbody rb = fb.GetComponent<Rigidbody>();
         rb.useGravity = false;

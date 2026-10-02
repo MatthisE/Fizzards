@@ -28,7 +28,7 @@ public class PlayerHealth : NetworkBehaviour
     [SerializeField] private float flashDuration = 0.15f;
     private float flashEndTime = 0f;
 
-    private Color[][] originalColors;   // FIX: store ALL material colors
+    private Color[][] originalColors;
     private bool isFlashing = false;
 
     public override void OnNetworkSpawn()
@@ -37,7 +37,6 @@ public class PlayerHealth : NetworkBehaviour
             CurrentHealth.Value = maxHealth;
 
         CacheOriginalColors();
-        CurrentHealth.OnValueChanged += OnHealthChanged;
     }
 
     private void Update()
@@ -47,7 +46,6 @@ public class PlayerHealth : NetworkBehaviour
 
         if (Time.time >= flashEndTime && isFlashing)
         {
-            // Restore ALL original material colors
             for (int i = 0; i < renderers.Length; i++)
             {
                 var mats = renderers[i].materials;
@@ -75,11 +73,6 @@ public class PlayerHealth : NetworkBehaviour
             for (int m = 0; m < mats.Length; m++)
                 originalColors[i][m] = mats[m].color;
         }
-    }
-
-    private void OnHealthChanged(int oldValue, int newValue)
-    {
-        //Debug.Log($"Player {OwnerClientId} health: {newValue}");
     }
 
     [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
@@ -110,8 +103,6 @@ public class PlayerHealth : NetworkBehaviour
             HitFlashClientRpc();
         }
     }
-
-    // --- RPCs ---
 
     [Rpc(SendTo.Everyone)]
     private void ApplyTransparentMaterialClientRpc()

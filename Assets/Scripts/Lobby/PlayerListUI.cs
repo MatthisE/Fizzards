@@ -14,18 +14,13 @@ public class PlayerListUI : MonoBehaviour
 
     private IEnumerator InitializeWhenReady()
     {
-        // Wait until PlayerListManager exists
         while (PlayerListManager.Instance == null)
             yield return null;
 
-        // Wait until the NetworkList is populated
         while (PlayerListManager.Instance.Players.Count == 0)
             yield return null;
 
-        // Subscribe to list changes
         PlayerListManager.Instance.Players.OnListChanged += OnPlayerListChanged;
-
-        // Initial UI build
         UpdateUI();
     }
 

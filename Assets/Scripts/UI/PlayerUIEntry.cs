@@ -14,7 +14,7 @@ public class PlayerUIEntry : MonoBehaviour
         
         var players = PlayerListManager.Instance.Players;
 
-        string playerName = $"Player {player.OwnerClientId}"; // fallback
+        string playerName = $"Player {player.OwnerClientId}";
 
         foreach (var p in players)
         {

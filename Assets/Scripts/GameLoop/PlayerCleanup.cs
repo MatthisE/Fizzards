@@ -24,15 +24,14 @@ public class PlayerCleanup : MonoBehaviour
         if (!NetworkManager.Singleton.IsServer)
             return;
 
-        newRoundButton.SetActive(false);   // hide button at start
-        StartCoroutine(DespawnRoutine());  // do safe despawn
+        newRoundButton.SetActive(false);
+        StartCoroutine(DespawnRoutine());
     }
 
     private IEnumerator DespawnRoutine()
     {
         DespawnAllPlayers();
 
-        // Wait until Netcode clears PlayerObject references
         bool cleared = false;
 
         while (!cleared)
@@ -48,10 +47,9 @@ public class PlayerCleanup : MonoBehaviour
                 }
             }
 
-            yield return null; // wait one frame
+            yield return null;
         }
 
-        // Destroy all fireballs
         var fireballs = GameObject.FindGameObjectsWithTag("Fireball");
 
         foreach (var fb in fireballs)
@@ -60,7 +58,6 @@ public class PlayerCleanup : MonoBehaviour
             netObj.Despawn(true); 
         }
 
-        // All players are despawned → show button
         newRoundButton.SetActive(true);
     }
 
