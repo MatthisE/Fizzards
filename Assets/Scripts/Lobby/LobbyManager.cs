@@ -13,6 +13,7 @@ public class LobbyManager : MonoBehaviour
     [SerializeField] private TMP_InputField ipText;
     [SerializeField] private TMP_InputField playerNameInput;
     [SerializeField] private GameObject startButton;
+    [SerializeField] private GameObject clientText;
 
     public static string LocalPlayerName = "Unnamed";
     private const int MaxPlayers = 4;
@@ -133,6 +134,7 @@ public class LobbyManager : MonoBehaviour
         if (NetworkManager.Singleton.IsClient && !NetworkManager.Singleton.IsHost)
         {
             PlayerListManager.Instance.SubmitNameRpc(LocalPlayerName, clientId);
+            clientText.SetActive(true);
         }
     }
 

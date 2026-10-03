@@ -48,6 +48,9 @@ public class PlayerMovement : NetworkBehaviour
         {
             input.enabled = false;
             input.DeactivateInput();
+
+            AudioListener listener = GetComponent<AudioListener>();
+            if (listener) listener.enabled = false;
         }
     }
 

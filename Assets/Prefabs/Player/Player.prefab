@@ -22,6 +22,7 @@ GameObject:
   - component: {fileID: 8527287467356297562}
   - component: {fileID: 5023553801851016826}
   - component: {fileID: 8535006500086392352}
+  - component: {fileID: 626020617931157691}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -510,6 +511,14 @@ MonoBehaviour:
       MaxSecondsBetweenUpdates: 0
     m_InternalValue: {r: 0, g: 0, b: 0, a: 0}
   rend: {fileID: 5125540878570827610}
+--- !u!81 &626020617931157691
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2227806587675840193}
+  m_Enabled: 1
 --- !u!1 &5483338864585071720
 GameObject:
   m_ObjectHideFlags: 0
@@ -706,9 +715,9 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 10
+  MaxDistance: 15
   Pan2D: 0
-  rolloffMode: 1
+  rolloffMode: 2
   BypassEffects: 0
   BypassListenerEffects: 0
   BypassReverbZones: 0
@@ -716,10 +725,19 @@ AudioSource:
     serializedVersion: 2
     m_Curve:
     - serializedVersion: 3
-      time: 0
-      value: 1
+      time: 0.4673706
+      value: 0.06365204
       inSlope: 0
       outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.7710534
+      value: 0.059556812
+      inSlope: -0.062668376
+      outSlope: -0.062668376
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.33333334
@@ -727,12 +745,12 @@ AudioSource:
     - serializedVersion: 3
       time: 1
       value: 0
-      inSlope: 0
-      outSlope: 0
+      inSlope: -1.1111112
+      outSlope: -1.1111112
       tangentMode: 0
       weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
+      inWeight: 0
+      outWeight: 0
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
@@ -771,7 +789,7 @@ AudioSource:
     m_Curve:
     - serializedVersion: 3
       time: 0
-      value: 1
+      value: 0.5101471
       inSlope: 0
       outSlope: 0
       tangentMode: 0
@@ -882,7 +900,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2789947523145420859}
   - component: {fileID: 4223032248372300798}
-  - component: {fileID: 1656678568920203021}
   - component: {fileID: 7263855467554573971}
   - component: {fileID: 1187667334674002416}
   m_Layer: 9
@@ -958,14 +975,6 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
---- !u!81 &1656678568920203021
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7415732538711362434}
-  m_Enabled: 1
 --- !u!114 &7263855467554573971
 MonoBehaviour:
   m_ObjectHideFlags: 0
