@@ -53,6 +53,14 @@ public class PlayerUIEntry : MonoBehaviour
     private void UpdateHealth(int value)
     {
         healthText.text = $"HP: {value}";
+
+        if (playerIcon != null)
+        {
+            if (value <= 0)
+            {
+                playerIcon.color = new Color(0.5f, 0.5f, 0.5f, 0.5f);
+            }
+        }
     }
 
     private void ApplyColor(Color c)

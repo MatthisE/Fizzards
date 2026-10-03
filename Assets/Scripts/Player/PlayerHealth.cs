@@ -1,5 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
+using System.Collections;
 
 public class PlayerHealth : NetworkBehaviour
 {
@@ -41,8 +42,19 @@ public class PlayerHealth : NetworkBehaviour
         if (IsServer)
             CurrentHealth.Value = maxHealth;
 
+        StartCoroutine(WaitForPlayerColor());
+    }
+
+    private IEnumerator WaitForPlayerColor()
+    {
+        var pc = GetComponent<PlayerColor>();
+
+        while (pc != null && pc.PlayerColorValue.Value == default)
+            yield return null;
+
         CacheOriginalColors();
     }
+
 
     private void Update()
     {
@@ -66,9 +78,15 @@ public class PlayerHealth : NetworkBehaviour
         }
     }
 
-    private void CacheOriginalColors()
+    public void CacheOriginalColors()
     {
         originalColors = new Color[renderers.Length][];
+
+        Color playerColor = Color.white;
+        var pc = GetComponent<PlayerColor>();
+        if (pc != null){
+            playerColor = pc.PlayerColorValue.Value;
+        }
 
         for (int i = 0; i < renderers.Length; i++)
         {
@@ -76,7 +94,15 @@ public class PlayerHealth : NetworkBehaviour
             originalColors[i] = new Color[mats.Length];
 
             for (int m = 0; m < mats.Length; m++)
+            {
                 originalColors[i][m] = mats[m].color;
+
+                if (m == 2)
+                {
+                    originalColors[i][m] = playerColor;
+                    mats[m].color = playerColor;
+                }
+            }
         }
     }
 
