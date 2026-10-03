@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 663840706807393795}
   - component: {fileID: 8527287467356297562}
   - component: {fileID: 5023553801851016826}
+  - component: {fileID: 8535006500086392352}
   m_Layer: 9
   m_Name: Player
   m_TagString: Untagged
@@ -313,7 +314,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 4112441111
+  GlobalObjectIdHash: 1322891442
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -490,6 +491,25 @@ MonoBehaviour:
       Synchronize: 1
       ParameterType: 4
   AnimatorParametersExpanded: 0
+--- !u!114 &8535006500086392352
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2227806587675840193}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8ce776acd6cd18444962882930bab070, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerColor
+  ShowTopMostFoldoutHeaderGroup: 1
+  PlayerColorValue:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: {r: 0, g: 0, b: 0, a: 0}
+  rend: {fileID: 5125540878570827610}
 --- !u!1 &5483338864585071720
 GameObject:
   m_ObjectHideFlags: 0

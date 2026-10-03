@@ -34,7 +34,6 @@ public class PlayerUIManager : NetworkBehaviour
         List<ulong> clientsCompleted,
         List<ulong> clientsTimedOut)
     {
-        // Only run in your game scene
         if (sceneName != "Game")
         {
             return;

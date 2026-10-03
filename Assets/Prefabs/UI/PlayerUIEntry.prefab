@@ -402,3 +402,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerUIEntry
   nameText: {fileID: 6594804026306331877}
   healthText: {fileID: 4464941825809205264}
+  playerIcon: {fileID: 9006312850597160238}

@@ -15,16 +15,40 @@ public class LobbyManager : MonoBehaviour
     [SerializeField] private GameObject startButton;
 
     public static string LocalPlayerName = "Unnamed";
+    private const int MaxPlayers = 4;
 
 
     private void Start()
     {
-        if (errorText != null)
-            errorText.gameObject.SetActive(false);
+        if (NetworkManager.Singleton.ConnectionApprovalCallback == null)
+        {
+            NetworkManager.Singleton.NetworkConfig.ConnectionApproval = true;
+            NetworkManager.Singleton.ConnectionApprovalCallback = ApprovalCheck;
+        }
 
         NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnected;
         NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+
+        if (errorText != null)
+            errorText.gameObject.SetActive(false);
     }
+
+    private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
+    {
+        int currentPlayers = NetworkManager.Singleton.ConnectedClients.Count;
+
+        if (currentPlayers >= MaxPlayers)
+        {
+            response.Approved = false;
+            response.Reason = "Lobby is full";
+            Debug.Log("Lobby full");
+            return;
+        }
+
+        response.Approved = true;
+        response.CreatePlayerObject = true;
+    }
+
 
     private string GetLocalIPAddress()
     {
@@ -144,4 +168,15 @@ public class LobbyManager : MonoBehaviour
             LoadSceneMode.Single
         );
     }
+
+    private void OnDestroy()
+    {
+        if (NetworkManager.Singleton != null)
+        {
+            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnected;
+            NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+            NetworkManager.Singleton.ConnectionApprovalCallback = null;
+        }
+    }
+
 }
